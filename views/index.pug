@@ -8,11 +8,13 @@ block content
     h3= "All users"
     div.users
      ul
-     each user in users
-      li
-       a.userLink(href=`/users/${user.id}`)= `User ${user.name}`
-   else
-    h3= "You are the first user. Congrats!"
+     each oneuser in users
+      if user.id === oneuser.id
+       li
+        a.userLink(href=`/users/${oneuser.id}`)= `User ${oneuser.name} (me)`
+      else
+       li
+        a.userLink(href=`/users/${oneuser.id}`)= `User ${oneuser.name}`
   else
    h1= 'Hello, Guest'
    a(href="/users/login") Login

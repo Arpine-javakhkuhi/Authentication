@@ -3,11 +3,12 @@ const passport = require('passport');
 const router = express.Router();
 const randomQuotes = require('random-quotes');
 const users = require('./allUsers').users;
+const bcrypt = require('bcrypt');
 
 const validation = (req, res, next) => {
     const name = req.body.name;
     const isNameExist = users.find(el => el.name === name);
-    const isValidName = /^[a-zA-Z]{2,}$/.test(name);
+    const isValidName = /^\S[a-zA-Z\s]+\S$/.test(name);
     if (isNameExist || !isValidName) {
         res.render('register', {
             title: "The name already exists or isn't valid!",
@@ -23,36 +24,28 @@ router.get('/login', (req, res) => {
         res.redirect('/');
         return;
     }
-    res.render('login', {
-        title: 'Login',
-    });
+    res.render('login');
 });
 
 router.post('/login', (req, res, next) => {
-    req.session.users = users;
     passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.log('ERROR: ', err);
-            res.render('error', {
-                message: 'Authentication failed.'
-            });
-            return ;
-        }
-        if (!user) {
+        if (err || !user) {
             res.render('login', {
-                title: 'There is no such user. Please, check name and password.'
+                error: info.message
             });
             return;
         }
         req.logIn(user, (err) => {
-          if (err) {
-              console.log('Error: ', err);
-              return;
-        }
-          req.session.user = user;
-          return res.redirect('/users/' + user.id);
+            if (err) {
+                res.render('login', {
+                    error: 'Authentication failed.'
+                });
+                return;
+            }
+            req.session.user = user;
+            return res.redirect('/users/' + user.id);
         });
-      })(req, res, next);
+    })(req, res, next);
 });
 
 router.get('/register', (req, res) => {
@@ -67,17 +60,18 @@ router.get('/register', (req, res) => {
     });
 });
 
-router.post('/register', validation, (req, res) => {
+router.post('/register', validation, async (req, res) => {
     const id = `${Date.now()}_${Math.random()}`;
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const newUser = {
         name: req.body.name,
-        password: req.body.password,
-        id: id
+        password: hashedPassword,
+        id
     };
     req.session.user = {
         name: req.body.name,
+        id
     }
-    req.session.users = users.slice(0);
     users.push(newUser);
     res.redirect('/');
 });

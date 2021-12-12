@@ -1,7 +1,9 @@
 extends layout
 
 block content
- h1= title
+ h1= "Login"
+ if error
+  h3= error
  form(method="post" action="/users/login")
   label(for="name") Name
   input(type="text" name="name")
