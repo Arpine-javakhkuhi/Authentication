@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  if user
+   h1= `Hello, ${user.name}`
+   a(href="/logout") Logout
+   if users.length>0
+    h3= "All users"
+    div.users
+     ul
+     each user in users
+      li
+       a.userLink(href=`/users/${user.id}`)= `User ${user.name}`
+   else
+    h3= "You are the first user. Congrats!"
+  else
+   h1= 'Hello, Guest'
+   a(href="/users/login") Login
+   a(href="/users/register") Register
+   p.about.
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, quia harum explicabo quidem optio omnis
+    officiis laudantium dolores? Quae quam eius necessitatibus eveniet vero hic iure iste perspiciatis magni,
+    distinctio labore, doloribus pariatur placeat dignissimos in quo dolorum nisi libero non expedita nemo
+    nostrum perferendis. Asperiores architecto commodi ad fugit repellat! Nihil labore voluptates perspiciatis
+    recusandae rerum molestias dolor quos quis harum nisi id tempora sapiente consequuntur, maiores aliquam
+    fugiat commodi. Nisi quis optio, odit voluptatem quidem commodi assumenda obcaecati amet, ut nihil sapiente
+    consequatur debitis magnam laborum. Hic ullam similique quaerat est neque facere eveniet praesentium?
+     Eum, magni odit!

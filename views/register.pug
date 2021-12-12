@@ -1,0 +1,15 @@
+extends layout
+
+block content
+ h1= title
+ if notRegistered
+  form(method="post" action="/users/register")
+   label(for="name") Name
+   input(type="text" name="name" value="")
+   br
+   label(for="password") Password
+   input(type="password" name="password" value="")
+   br
+   input.submit(type="submit", value="Sign up")
+ else
+  a(href="/users") Home Page
